@@ -67,6 +67,8 @@ Serial.println("Starting inferences... Input a number! ");
  * loop()
 */
 void loop() { 
+	int32_t StartuS, StopuS, TimeuS;
+
 	// Wait for serial input to be made available and parse it as a float
 	if(Serial.available() > 0) {
     	float user_input = Serial.parseFloat();
@@ -83,19 +85,22 @@ void loop() {
     	input->data.f[0] = user_input;
 
     	Serial.println("Running inference on inputted data...");
+		StartuS = micros();
 
     	// Run inference on the input data
     	if(interpreter->Invoke() != kTfLiteOk) {
     		Serial.println("There was an error invoking the interpreter!");
     		return;
     	}
-
+		StopuS = micros();
+		TimeuS = StopuS - StartuS;
     	// Print the output of the model.
     	Serial.print("Input: ");
     	Serial.println(user_input);
     	Serial.print("Output: ");
     	Serial.println(output->data.f[0]);
-    	Serial.println("");
-
+    	Serial.print("Time taken: ");
+		Serial.printf("%d[uS]", TimeuS);
+		Serial.println("");
     }
 } 
